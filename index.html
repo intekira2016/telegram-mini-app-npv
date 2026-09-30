@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10 млн через 3 года — это сколько сегодня?</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#171717;background:#fff}
+main{max-width:680px;margin:auto;padding:20px 16px 28px}.hero{padding:4px 2px 20px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#666;margin-bottom:8px}
+h1{font-size:27px;line-height:1.12;margin:0 0 8px;font-weight:850}.lead{font-size:15px;line-height:1.5;color:#666;margin:0}
+.form{background:#f4f3ef;border:1px solid #deddd8;border-radius:22px;padding:20px}
+.field{background:#fff;border:1px solid #deddd8;border-radius:16px;padding:15px 16px;margin-bottom:12px}
+.field-title{font-size:15px;font-weight:800;line-height:1.25;margin-bottom:4px}.field-sub{font-size:12px;color:#666;margin-bottom:11px;line-height:1.35}
+.input-row{display:flex;align-items:center;border:1.5px solid #cfcfc9;border-radius:12px;overflow:hidden}
+input{width:100%;min-width:0;border:0;outline:0;padding:12px 13px;font-size:18px;font-weight:700}
+.unit{padding:0 13px;color:#666;font-size:14px;font-weight:700;border-left:1px solid #deddd8;align-self:stretch;display:flex;align-items:center;background:#fafaf8;white-space:nowrap}
+button{width:100%;min-height:50px;margin-top:16px;border:0;border-radius:14px;background:#171717;color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+.error{min-height:18px;margin-top:8px;color:#8a1c1c;font-size:13px}
+.result{margin-top:16px;border-radius:22px;border:1px solid #deddd8;overflow:hidden;background:#fff}
+.result-top{padding:18px 20px;background:#171717;color:#fff}.result-label{font-size:13px;opacity:.75;margin-bottom:5px}
+.big{font-size:34px;line-height:1.08;font-weight:900;word-break:break-word}.result-body{padding:18px 20px}
+.explain{font-size:15px;line-height:1.55;margin:0}.idea{margin-top:14px;padding:13px 14px;border-radius:13px;background:#f4f3ef;font-size:13px;line-height:1.5}
+@media(max-width:520px){main{padding:16px 12px 24px}h1{font-size:24px}.form{padding:14px}.big{font-size:29px}}
+</style>
+</head>
+<body>
+<main id="app">
+<section class="hero">
+<div class="eyebrow">Финансы без тумана</div>
+<h1>10 млн через 3 года — это сколько сегодня?</h1>
+<p class="lead">Введите свои цифры и посмотрите, сколько будущая сумма стоит в сегодняшних деньгах.</p>
+</section>
+<section class="form">
+<div class="field"><div class="field-title">💰 Сколько денег вы получите?</div>
+<div class="field-sub">Сумма, которую проект должен принести в будущем</div>
+<div class="input-row"><input id="amount" inputmode="decimal" value="10"><div class="unit">млн ₽</div></div></div>
+<div class="field"><div class="field-title">📅 Когда вы получите эти деньги?</div>
+<div class="field-sub">Срок до получения всей суммы</div>
+<div class="input-row"><input id="years" inputmode="decimal" value="3"><div class="unit">лет</div></div></div>
+<div class="field"><div class="field-title">📈 Какую ставку используем?</div>
+<div class="field-sub">Ставка, с которой оцениваем сегодняшнюю стоимость будущих денег</div>
+<div class="input-row"><input id="rate" inputmode="decimal" value="15"><div class="unit">% годовых</div></div></div>
+<div id="error" class="error"></div>
+<button id="calc" type="button">Посчитать стоимость сегодня →</button>
+</section>
+<section class="result">
+<div class="result-top"><div class="result-label">Стоимость будущих денег сегодня</div><div class="big" id="today">—</div></div>
+<div class="result-body"><p class="explain" id="explain">Введите параметры и нажмите кнопку.</p>
+<div class="idea">💡 <b>Идея NPV:</b> будущие деньги переводим в сегодняшнюю стоимость. Потому что 10 млн ₽ сегодня и 10 млн ₽ через несколько лет — экономически не одно и то же.</div></div>
+</section>
+</main>
+<script>
+(function(){
+const a=document.getElementById("amount"),y=document.getElementById("years"),r=document.getElementById("rate");
+const out=document.getElementById("today"),exp=document.getElementById("explain"),err=document.getElementById("error");
+const fmt=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2});
+const n=v=>Number(String(v).replace(",","." ).replace(/\s/g,""));
+function yw(x){return x%10===1&&x%100!==11?"год":x%10>=2&&x%10<=4&&!(x%100>=12&&x%100<=14)?"года":"лет"}
+function calc(){
+ let A=n(a.value),Y=n(y.value),R=n(r.value); err.textContent="";
+ if(!Number.isFinite(A)||!Number.isFinite(Y)||!Number.isFinite(R)||A<=0||Y<=0||R<0||Y>100||R>100){
+  out.textContent="—";exp.textContent="Проверьте введённые значения.";err.textContent="Сумма и срок должны быть больше нуля, ставка — от 0 до 100%.";return;
+ }
+ let pv=A/Math.pow(1+R/100,Y),d=A-pv;
+ out.textContent=fmt.format(pv)+" млн ₽";
+ exp.textContent="Если через "+fmt.format(Y)+" "+yw(Y)+" вы получите "+fmt.format(A)+" млн ₽, то при ставке "+fmt.format(R)+"% эти деньги сегодня стоят примерно "+fmt.format(pv)+" млн ₽. Разница — "+fmt.format(d)+" млн ₽.";
+}
+document.getElementById("calc").addEventListener("click",calc);
+[a,y,r].forEach(i=>i.addEventListener("keydown",e=>{if(e.key==="Enter")calc()}));
+calc();
+})();
+</script>
+</body>
+</html>
